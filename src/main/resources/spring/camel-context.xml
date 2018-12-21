@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://camel.apache.org/schema/spring  http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <bean id="counterPolicy" class="com.redhat.support.examples.policy.CounterRoutePolicy">
+        <constructor-arg name="numExecutions" value="${amq.num-messages-to-move}" />
+    </bean>
+
+    <bean id="shutdownGuard" class="com.redhat.support.examples.processor.ShutdownGuard" />
+
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" >
+        <route id="moveMessagesRoute" streamCache="true" routePolicyRef="counterPolicy">
+            <from id="amqSource" uri="amq-source:{{amq.source.queue-name}}"/>
+            <process ref="shutdownGuard" />
+            <to id="amqDestination" uri="amq-destination:queue:{{amq.destination.queue-name}}" />
+            <log loggingLevel="INFO" message="moved message with JMS timestamp: ${headers.JMSTimestamp} and ID: ${headers.JMSMessageID}" />
+        </route>
+
+    </camelContext>
+</beans>
