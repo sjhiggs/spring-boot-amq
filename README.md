@@ -20,3 +20,8 @@ The example can be built with
 
 java -jar target/spring-boot-amq-1.0.0-SNAPSHOT.jar
 
+-or-
+
+java -jar target/spring-boot-amq-1.0.0-SNAPSHOT.jar --amq.num-messages-to-move=2
+
+
